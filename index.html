@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$CUM - Interactive Solana Token Experience</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Iso&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-accent: #00ff88;
+            --secondary-accent: #00ccff;
+            --dark-bg: #0a0a0a;
+            --panel-bg: rgba(15, 15, 15, 0.95);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --success: #00ff88;
+            --warning: #feca57;
+            --danger: #ff6b6b;
+            --grid-color: rgba(255, 255, 255, 0.03);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--dark-bg);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .main-target {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 420px;
+            height: 420px;
+            cursor: pointer;
+            z-index: 50;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 0 12px rgba(0, 255, 136, 0.2));
+        }
+
+        .main-target img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: absolute;
+        }
+
+        .main-target:hover img {
+            transform: scale(1.08);
+        }
+
+        .main-target:active img {
+            transform: scale(0.92);
+        }
+
+        .main-target img.second-image {
+            opacity: 0;
+            transform: scale(0.85);
+        }
+
+        .main-target.show-second img.first-image {
+            opacity: 0;
+            transform: scale(1.15);
+        }
+
+        .main-target.show-second img.second-image {
+            opacity: 1;
+            transform: scale(1);
+            animation: waveMove 2.8s ease-in-out infinite;
+        }
+
+        @keyframes waveMove {
+            0%, 100% { transform: scale(1) rotate(-1.5deg); }
+            50% { transform: scale(1.04) rotate(1.5deg); }
+        }
+
+        .wave-animation {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0, 255, 136, 0.15);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 49;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
+        }
+
+        /* UI Elements */
+        .ui-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Stats Panel */
+        .stats-hud {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(24px);
+            pointer-events: auto;
+            min-width: 220px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-icon {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            font-size: 14px;
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            color: var(--primary-accent);
+            font-weight: 600;
+            font-family: 'Roboto Mono', monospace;
+            letter-spacing: -0.5px;
+        }
+
+        /* Token Header */
+        .token-header {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            text-align: right;
+            pointer-events: auto;
+        }
+
+        .token-symbol {
+            font-size: 32px;
+            font-weight: 700;
+              font-family: "Rubik Iso", system-ui;
+
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            line-height: 1;
+        }
+
+        .token-subtitle {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            font-weight: 500;
+            margin-top: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Control Bar */
+        .control-bar {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            pointer-events: auto;
+        }
+
+        .control-btn {
+            padding: 12px 24px;
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            background: var(--panel-bg);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(24px);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        .control-btn.active {
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            border-color: transparent;
+            color: #000;
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        /* Leaderboard */
+        .leaderboard {
+            position: absolute;
+            top: 100px;
+            right: 24px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(24px);
+            pointer-events: auto;
+            min-width: 240px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .leaderboard-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--primary-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 13px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .leaderboard-rank {
+            color: var(--text-secondary);
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 500;
+        }
+
+        .leaderboard-score {
+            color: var(--secondary-accent);
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 600;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            width: 280px;
+            height: 160px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 16px;
+            overflow-y: auto;
+            pointer-events: auto;
+            backdrop-filter: blur(24px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .activity-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .activity-item {
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .activity-user {
+            color: var(--secondary-accent);
+            font-weight: 600;
+        }
+
+        /* Effects */
+        .splat {
+            position: absolute;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .splat-particle {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            color: var(--text-primary);
+            padding: 16px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            z-index: 2000;
+            backdrop-filter: blur(24px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+            animation: notificationAnim 2.5s ease-out forwards;
+        }
+
+        .combo-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--primary-accent);
+            pointer-events: none;
+            z-index: 500;
+            animation: comboFlash 0.6s ease-out;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .turbo-mode {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7aa, #ff8e8e) !important;
+            background-size: 400% 400%;
+            animation: turboGradient 1s ease infinite;
+        }
+
+        .golden-effect {
+            filter: drop-shadow(0 0 12px gold) brightness(1.4);
+        }
+
+        .screen-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 255, 136, 0.08);
+            pointer-events: none;
+            z-index: 999;
+            animation: flashEffect 0.2s ease-out;
+        }
+
+        /* Social Links Section */
+        .social-links {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: auto;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .social-link:hover {
+            color: var(--primary-accent);
+        }
+
+        .social-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+        }
+
+        .contract-link {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.2s ease;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .contract-link:hover {
+            color: var(--secondary-accent);
+        }
+
+        .token-image-link {
+            display: inline-block;
+            margin-top: 12px;
+        }
+
+        .token-image {
+            width: 100px;
+            height: 50px;
+            object-fit: contain;
+            transition: transform 0.2s ease;
+        }
+
+        .token-image:hover {
+            transform: scale(1.05);
+        }
+
+        /* Animations */
+        @keyframes notificationAnim {
+            0% { 
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0;
+            }
+            20% { 
+                transform: translate(-50%, -50%) scale(1.03);
+                opacity: 1;
+            }
+            80% { 
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(-50%, -50%) scale(0.95);
+                opacity: 0;
+            }
+        }
+
+        @keyframes comboFlash {
+            0% { 
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.15);
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0;
+            }
+        }
+
+        @keyframes particleFloat {
+            0% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(var(--dx), var(--dy)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes waveAnimation {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.4;
+            }
+            100% {
+                width: 400px;
+                height: 400px;
+                opacity: 0;
+            }
+        }
+
+        @keyframes turboGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes flashEffect {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-hud, .leaderboard, .activity-feed, .social-links {
+                padding: 16px;
+                min-width: auto;
+                width: calc(100% - 48px);
+            }
+            
+            .leaderboard {
+                top: auto;
+                bottom: 200px;
+            }
+            
+            .activity-feed {
+                width: calc(100% - 48px);
+                height: 120px;
+            }
+            
+            .control-bar {
+                bottom: 16px;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+                padding: 0 16px;
+            }
+            
+            .control-btn {
+                padding: 10px 18px;
+                font-size: 12px;
+                flex: 1;
+                min-width: 120px;
+            }
+            
+            .token-symbol {
+                font-size: 24px;
+            }
+
+            .main-target {
+                width: 180px;
+                height: 180px;
+            }
+
+            .social-links {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                margin-top: 20px;
+                padding: 16px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-overlay"></div>
+    
+    <!-- Main clickable target with image -->
+    <div class="main-target" id="mainTarget">
+        <img src="New Project (2).png" alt="$CUM Token" class="first-image">
+        <img src="s.png" alt="$CUM Token Body" class="second-image">
+    </div>
+    
+    <div class="ui-overlay">
+        <div class="stats-hud">
+            <div class="panel-header">
+                <div class="panel-title">Statistics</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Interactions</span>
+                <span class="stat-value" id="splatCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Current Streak</span>
+                <span class="stat-value" id="comboCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Best Session</span>
+                <span class="stat-value" id="highScore">0</span>
+            </div>
+        </div>
+
+        <div class="token-header">
+            <div class="token-symbol">$CUM PLATFORM</div>
+            <div class="token-subtitle">CUM AND MAKE IT CUM</div>
+        </div>
+
+        <div class="leaderboard">
+            <div class="panel-header">
+                <div class="panel-title">Live Rankings</div>
+            </div>
+            <div id="leaderboardList">
+                <div class="leaderboard-item">
+                    <span class="leaderboard-rank">#1 CUMASTER</span>
+                    <span class="leaderboard-score">12,847</span>
+                </div>
+                <div class="leaderboard-item">
+                    <span class="leaderboard-rank">#2 FUCKIKOL</span>
+                    <span class="leaderboard-score">9,234</span>
+                </div>
+                <div class="leaderboard-item">
+                    <span class="leaderboard-rank">#3 ALONCUM</span>
+                    <span class="leaderboard-score">7,891</span>
+                </div>
+                <div class="leaderboard-item">
+                    <span class="leaderboard-rank">#4 You</span>
+                    <span class="leaderboard-score" id="yourScore">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="social-links">
+            <a href="https://twitter.com/yourtwitterhandle" class="social-link" target="_blank">
+                <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                </svg>
+                Follow us on Twitter
+            </a>
+            
+            <a href="https://solscan.io/token/YOUR_CONTRACT_ADDRESS" class="contract-link" target="_blank">
+                Contract: 7x5...9f2
+            </a>
+            
+            <a href="https://yourwebsite.com" class="token-image-link" target="_blank">
+                <img src="token-image.png" alt="$CUM Token" class="token-image">
+            </a>
+        </div>
+
+        <div class="control-bar">
+            <button class="control-btn" onclick="clearCanvas()">RESET</button>
+            <button class="control-btn" id="turboBtn" onclick="toggleTurbo()">BOOST MODE</button>
+            <button class="control-btn" onclick="connectWallet()">CONNECT WALLET</button>
+        </div>
+
+        <div class="activity-feed">
+            <div class="panel-header">
+                <div class="panel-title">Live Activity</div>
+            </div>
+            <div id="activityList">
+                <div class="activity-item"><span class="activity-user">trader_alpha</span> generated 500 interactions</div>
+                <div class="activity-item"><span class="activity-user">defi_legend</span> activated boost mode</div>
+                <div class="activity-item"><span class="activity-user">sol_explorer</span> hit 1000 streak</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let splatCount = 0;
+        let comboCount = 0;
+        let highScore = parseInt(localStorage.getItem('splatHighScore') || '0');
+        let turboMode = false;
+        let comboTimer = null;
+        let lastClickTime = 0;
+        let showSecondImage = false;
+
+        const colors = ['#00ff88', '#00ccff', '#ff6b6b', '#feca57', '#ff8e8e', '#4ecdc4'];
+        const achievements = [
+            "First interaction milestone!",
+            "Gaining momentum...",
+            "Impressive streak building!",
+            "You're on fire!",
+            "Unstoppable force!",
+            "Legendary performance!",
+            "Breaking records!",
+            "Absolutely crushing it!"
+        ];
+
+        const activityMessages = [
+            "achieved new personal best",
+            "activated boost mode",
+            "hit combo milestone",
+            "broke previous record",
+            "completed challenge",
+            "reached new level",
+            "unlocked achievement",
+            "dominated leaderboard"
+        ];
+
+        document.getElementById('highScore').textContent = highScore.toLocaleString();
+
+        // Enhanced audio system
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playTone(frequency, duration, volume = 0.1, type = 'sine') {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+            
+            gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        function createParticleSystem(x, y, isGolden = false) {
+            const particleCount = turboMode ? 14 : 10;
+            const baseColor = isGolden ? '#ffd700' : colors[Math.floor(Math.random() * colors.length)];
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'splat-particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.background = baseColor;
+                
+                if (isGolden) {
+                    particle.classList.add('golden-effect');
+                }
+                
+                const angle = (i / particleCount) * Math.PI * 2;
+                const velocity = 50 + Math.random() * 100;
+                const dx = Math.cos(angle) * velocity;
+                const dy = Math.sin(angle) * velocity;
+                
+                particle.style.setProperty('--dx', dx + 'px');
+                particle.style.setProperty('--dy', dy + 'px');
+                particle.style.animation = `particleFloat ${turboMode ? 0.7 : 1}s ease-out forwards`;
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, turboMode ? 700 : 1000);
+            }
+        }
+
+        function createWaveAnimation(x, y) {
+            const wave = document.createElement('div');
+            wave.className = 'wave-animation';
+            wave.style.left = x + 'px';
+            wave.style.top = y + 'px';
+            wave.style.border = `1px solid ${colors[Math.floor(Math.random() * colors.length)]}`;
+            wave.style.animation = `waveAnimation 0.8s ease-out forwards`;
+            
+            document.body.appendChild(wave);
+            
+            setTimeout(() => {
+                if (wave.parentNode) {
+                    wave.parentNode.removeChild(wave);
+                }
+            }, 800);
+        }
+
+        function updateDisplay() {
+            document.getElementById('splatCount').textContent = splatCount.toLocaleString();
+            document.getElementById('comboCount').textContent = comboCount;
+            document.getElementById('yourScore').textContent = splatCount.toLocaleString();
+            
+            if (splatCount > highScore) {
+                highScore = splatCount;
+                document.getElementById('highScore').textContent = highScore.toLocaleString();
+                localStorage.setItem('splatHighScore', highScore.toString());
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 2500);
+        }
+
+        function showComboIndicator(combo) {
+            if (combo < 5) return;
+            
+            const indicator = document.createElement('div');
+            indicator.className = 'combo-indicator';
+            indicator.textContent = `${combo}X COMBO`;
+            document.body.appendChild(indicator);
+            
+            setTimeout(() => {
+                if (indicator.parentNode) {
+                    indicator.parentNode.removeChild(indicator);
+                }
+            }, 600);
+        }
+
+        function addScreenFlash() {
+            const flash = document.createElement('div');
+            flash.className = 'screen-flash';
+            document.body.appendChild(flash);
+            
+            setTimeout(() => {
+                if (flash.parentNode) {
+                    flash.parentNode.removeChild(flash);
+                }
+            }, 200);
+        }
+
+        function addActivity() {
+            const activityList = document.getElementById('activityList');
+            const activity = document.createElement('div');
+            activity.className = 'activity-item';
+            const username = 'user_' + Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+            const action = activityMessages[Math.floor(Math.random() * activityMessages.length)];
+            activity.innerHTML = `<span class="activity-user">${username}</span> ${action}`;
+            
+            activityList.appendChild(activity);
+            activityList.scrollTop = activityList.scrollHeight;
+            
+            if (activityList.children.length > 8) {
+                activityList.removeChild(activityList.children[1]); // Keep title
+            }
+        }
+
+        function toggleImages() {
+            const target = document.getElementById('mainTarget');
+            showSecondImage = !showSecondImage;
+            
+            if (showSecondImage) {
+                target.classList.add('show-second');
+                playTone(600, 0.4, 0.1, 'sine');
+            } else {
+                target.classList.remove('show-second');
+                playTone(400, 0.4, 0.1, 'sine');
+            }
+        }
+
+        function handleTargetClick(e) {
+            e.stopPropagation();
+            
+            const currentTime = Date.now();
+            const timeDiff = currentTime - lastClickTime;
+            
+            // Enhanced combo system
+            if (timeDiff < 800) {
+                comboCount++;
+                if (comboCount % 5 === 0) {
+                    showComboIndicator(comboCount);
+                }
+            } else {
+                comboCount = 1;
+            }
+            
+            lastClickTime = currentTime;
+            splatCount++;
+            
+            // Add click animation to target
+            const target = document.getElementById('mainTarget');
+            const img = target.querySelector('img');
+            img.style.transform = 'scale(0.92)';
+            setTimeout(() => img.style.transform = 'scale(1)', 300);
+            
+            const isGolden = comboCount > 0 && comboCount % 10 === 0;
+            const rect = target.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            createParticleSystem(centerX, centerY, isGolden);
+            createWaveAnimation(centerX, centerY);
+            updateDisplay();
+            
+            // Toggle between images on each click
+            toggleImages();
+            
+            // Enhanced audio feedback
+            const baseFreq = 300 + (comboCount * 20);
+            const volume = Math.min(0.15, 0.05 + (comboCount * 0.01));
+            playTone(baseFreq, 0.1, volume, isGolden ? 'sawtooth' : 'sine');
+            
+            if (isGolden) {
+                addScreenFlash();
+                playTone(baseFreq * 2, 0.2, 0.1, 'square');
+            }
+            
+            // Achievement notifications
+            if (splatCount % 100 === 0) {
+                const achievementIndex = Math.min(Math.floor(splatCount / 100) - 1, achievements.length - 1);
+                showNotification(achievements[achievementIndex]);
+                addActivity();
+            }
+            
+            // Reset combo timer
+            clearTimeout(comboTimer);
+            comboTimer = setTimeout(() => {
+                comboCount = 0;
+                updateDisplay();
+            }, 1500);
+        }
+
+        function clearCanvas() {
+            const particles = document.querySelectorAll('.splat-particle');
+            particles.forEach(particle => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            });
+            
+            playTone(150, 0.3, 0.1, 'sawtooth');
+            showNotification("Canvas cleared!");
+        }
+
+        function toggleTurbo() {
+            turboMode = !turboMode;
+            const turboBtn = document.getElementById('turboBtn');
+            
+            if (turboMode) {
+                turboBtn.textContent = 'BOOST ACTIVE';
+                turboBtn.classList.add('turbo-mode');
+                showNotification("Boost mode activated!");
+                playTone(500, 0.2, 0.1, 'square');
+            } else {
+                turboBtn.textContent = 'BOOST MODE';
+                turboBtn.classList.remove('turbo-mode');
+                showNotification("Boost mode deactivated");
+            }
+        }
+
+        async function connectWallet() {
+            try {
+                // Check if Phantom is installed
+                if (window.solana && window.solana.isPhantom) {
+                    showNotification("Connecting to Phantom Wallet...");
+                    
+                    // Connect to Phantom
+                    const response = await window.solana.connect();
+                    const publicKey = response.publicKey.toString();
+                    
+                    // Shorten the public key for display
+                    const shortKey = `${publicKey.substring(0, 4)}...${publicKey.substring(publicKey.length - 4)}`;
+                    
+                    showNotification(`Connected: ${shortKey}`);
+                    playTone(440, 0.3, 0.1, 'triangle');
+                    
+                    // You can store the publicKey for future use
+                    console.log("Connected wallet:", publicKey);
+                } else {
+                    showNotification("Phantom Wallet not found!");
+                    playTone(220, 0.3, 0.1, 'sawtooth');
+                    
+                    // Optionally provide a link to install Phantom
+                    setTimeout(() => {
+                        if (confirm("Phantom Wallet not detected. Would you like to install it?")) {
+                            window.open('https://phantom.app/', '_blank');
+                        }
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error("Wallet connection error:", error);
+                showNotification("Connection failed");
+                playTone(220, 0.5, 0.1, 'sawtooth');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('mainTarget').addEventListener('click', handleTargetClick);
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        
+        // Mobile support
+        document.getElementById('mainTarget').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleTargetClick(e);
+        });
+
+        // Initialize
+        setTimeout(() => addActivity(), 2000);
+        setTimeout(() => addActivity(), 4000);
+        setTimeout(() => showNotification("MAKE IT CUM"), 100);
+    </script>
+</body>
+</html>
