@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>$CUM - Interactive Solana Token Experience</title>
+    <title>$NUT - Interactive Solana Token Experience</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -619,8 +619,8 @@
     
     <!-- Main clickable target with image -->
     <div class="main-target" id="mainTarget">
-        <img src="New Project (2).png" alt="$CUM Token" class="first-image">
-        <img src="s.png" alt="$CUM Token Body" class="second-image">
+        <img src="New Project (2).png" alt="$NUT Token" class="first-image">
+        <img src="s.png" alt="$NUT Token Body" class="second-image">
     </div>
     
     <div class="ui-overlay">
@@ -643,8 +643,8 @@
         </div>
 
         <div class="token-header">
-            <div class="token-symbol">$CUM PLATFORM</div>
-            <div class="token-subtitle">CUM AND MAKE IT CUM</div>
+            <div class="token-symbol">$NUT PLATFORM</div>
+            <div class="token-subtitle">NUT AND MAKE IT NUT</div>
         </div>
 
         <div class="leaderboard">
@@ -653,7 +653,7 @@
             </div>
             <div id="leaderboardList">
                 <div class="leaderboard-item">
-                    <span class="leaderboard-rank">#1 CUMASTER</span>
+                    <span class="leaderboard-rank">#1 NUTASTER</span>
                     <span class="leaderboard-score">12,847</span>
                 </div>
                 <div class="leaderboard-item">
@@ -661,7 +661,7 @@
                     <span class="leaderboard-score">9,234</span>
                 </div>
                 <div class="leaderboard-item">
-                    <span class="leaderboard-rank">#3 ALONCUM</span>
+                    <span class="leaderboard-rank">#3 ALONNUT</span>
                     <span class="leaderboard-score">7,891</span>
                 </div>
                 <div class="leaderboard-item">
@@ -672,19 +672,19 @@
         </div>
 
         <div class="social-links">
-            <a href="https://x.com/CumPlatformSol" class="social-link" target="_blank">
+            <a href="https://x.com/NUTPlatformSol" class="social-link" target="_blank">
                 <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                 </svg>
                 Follow us on Twitter
             </a>
             
-            <a href="https://x.com/CumPlatformSol" class="contract-link" target="_blank">
+            <a href="https://x.com/NUTPlatformSol" class="contract-link" target="_blank">
                 Contract: HERE
             </a>
             
             <a href="https://yourwebsite.com" class="token-image-link" target="_blank">
-                <img src="Cum.png" alt="$CUM Token" class="token-image">
+                <img src="NUT.png" alt="$NUT Token" class="token-image">
             </a>
         </div>
 
@@ -738,7 +738,7 @@
             "dominated leaderboard"
         ];
 
-        document.getElementById('highScore').textContent = highScore.toLocaleString();
+        doNUTent.getElementById('highScore').textContent = highScore.toLocaleString();
 
         // Enhanced audio system
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -765,7 +765,7 @@
             const baseColor = isGolden ? '#ffd700' : colors[Math.floor(Math.random() * colors.length)];
             
             for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
+                const particle = doNUTent.createElement('div');
                 particle.className = 'splat-particle';
                 particle.style.left = x + 'px';
                 particle.style.top = y + 'px';
@@ -784,7 +784,7 @@
                 particle.style.setProperty('--dy', dy + 'px');
                 particle.style.animation = `particleFloat ${turboMode ? 0.7 : 1}s ease-out forwards`;
                 
-                document.body.appendChild(particle);
+                doNUTent.body.appendChild(particle);
                 
                 setTimeout(() => {
                     if (particle.parentNode) {
@@ -795,14 +795,14 @@
         }
 
         function createWaveAnimation(x, y) {
-            const wave = document.createElement('div');
+            const wave = doNUTent.createElement('div');
             wave.className = 'wave-animation';
             wave.style.left = x + 'px';
             wave.style.top = y + 'px';
             wave.style.border = `1px solid ${colors[Math.floor(Math.random() * colors.length)]}`;
             wave.style.animation = `waveAnimation 0.8s ease-out forwards`;
             
-            document.body.appendChild(wave);
+            doNUTent.body.appendChild(wave);
             
             setTimeout(() => {
                 if (wave.parentNode) {
@@ -812,22 +812,22 @@
         }
 
         function updateDisplay() {
-            document.getElementById('splatCount').textContent = splatCount.toLocaleString();
-            document.getElementById('comboCount').textContent = comboCount;
-            document.getElementById('yourScore').textContent = splatCount.toLocaleString();
+            doNUTent.getElementById('splatCount').textContent = splatCount.toLocaleString();
+            doNUTent.getElementById('comboCount').textContent = comboCount;
+            doNUTent.getElementById('yourScore').textContent = splatCount.toLocaleString();
             
             if (splatCount > highScore) {
                 highScore = splatCount;
-                document.getElementById('highScore').textContent = highScore.toLocaleString();
+                doNUTent.getElementById('highScore').textContent = highScore.toLocaleString();
                 localStorage.setItem('splatHighScore', highScore.toString());
             }
         }
 
         function showNotification(message) {
-            const notification = document.createElement('div');
+            const notification = doNUTent.createElement('div');
             notification.className = 'notification';
             notification.textContent = message;
-            document.body.appendChild(notification);
+            doNUTent.body.appendChild(notification);
             
             setTimeout(() => {
                 if (notification.parentNode) {
@@ -839,10 +839,10 @@
         function showComboIndicator(combo) {
             if (combo < 5) return;
             
-            const indicator = document.createElement('div');
+            const indicator = doNUTent.createElement('div');
             indicator.className = 'combo-indicator';
             indicator.textContent = `${combo}X COMBO`;
-            document.body.appendChild(indicator);
+            doNUTent.body.appendChild(indicator);
             
             setTimeout(() => {
                 if (indicator.parentNode) {
@@ -852,9 +852,9 @@
         }
 
         function addScreenFlash() {
-            const flash = document.createElement('div');
+            const flash = doNUTent.createElement('div');
             flash.className = 'screen-flash';
-            document.body.appendChild(flash);
+            doNUTent.body.appendChild(flash);
             
             setTimeout(() => {
                 if (flash.parentNode) {
@@ -864,8 +864,8 @@
         }
 
         function addActivity() {
-            const activityList = document.getElementById('activityList');
-            const activity = document.createElement('div');
+            const activityList = doNUTent.getElementById('activityList');
+            const activity = doNUTent.createElement('div');
             activity.className = 'activity-item';
             const username = 'user_' + Math.floor(Math.random() * 9999).toString().padStart(4, '0');
             const action = activityMessages[Math.floor(Math.random() * activityMessages.length)];
@@ -880,7 +880,7 @@
         }
 
         function toggleImages() {
-            const target = document.getElementById('mainTarget');
+            const target = doNUTent.getElementById('mainTarget');
             showSecondImage = !showSecondImage;
             
             if (showSecondImage) {
@@ -912,7 +912,7 @@
             splatCount++;
             
             // Add click animation to target
-            const target = document.getElementById('mainTarget');
+            const target = doNUTent.getElementById('mainTarget');
             const img = target.querySelector('img');
             img.style.transform = 'scale(0.92)';
             setTimeout(() => img.style.transform = 'scale(1)', 300);
@@ -955,7 +955,7 @@
         }
 
         function clearCanvas() {
-            const particles = document.querySelectorAll('.splat-particle');
+            const particles = doNUTent.querySelectorAll('.splat-particle');
             particles.forEach(particle => {
                 if (particle.parentNode) {
                     particle.parentNode.removeChild(particle);
@@ -968,7 +968,7 @@
 
         function toggleTurbo() {
             turboMode = !turboMode;
-            const turboBtn = document.getElementById('turboBtn');
+            const turboBtn = doNUTent.getElementById('turboBtn');
             
             if (turboMode) {
                 turboBtn.textContent = 'BOOST ACTIVE';
@@ -1019,11 +1019,11 @@
         }
 
         // Event listeners
-        document.getElementById('mainTarget').addEventListener('click', handleTargetClick);
-        document.addEventListener('contextmenu', e => e.preventDefault());
+        doNUTent.getElementById('mainTarget').addEventListener('click', handleTargetClick);
+        doNUTent.addEventListener('contextmenu', e => e.preventDefault());
         
         // Mobile support
-        document.getElementById('mainTarget').addEventListener('touchstart', (e) => {
+        doNUTent.getElementById('mainTarget').addEventListener('touchstart', (e) => {
             e.preventDefault();
             handleTargetClick(e);
         });
@@ -1031,8 +1031,9 @@
         // Initialize
         setTimeout(() => addActivity(), 2000);
         setTimeout(() => addActivity(), 4000);
-        setTimeout(() => showNotification("MAKE IT CUM"), 100);
+        setTimeout(() => showNotification("MAKE IT NUT"), 100);
     </script>
 </body>
 </html>
+
 
